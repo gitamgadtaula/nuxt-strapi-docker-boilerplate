@@ -6,8 +6,8 @@ Running the database
 
 ```
 docker-compose pull
-docker-compose up db // to run one image
-docker-compose up // to run all 3 images
+docker-compose up db        // to run one image
+docker-compose up           // to run all 3 images
 
 ```
 
