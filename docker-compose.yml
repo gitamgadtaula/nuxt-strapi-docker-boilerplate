@@ -1,0 +1,62 @@
+version: "3.8"
+services:
+  backend:
+    image: strapi/strapi
+    ports: [ 1337:1337 ]
+    volumes:
+      - ./backend:/usr/local/app
+    depends_on:
+      - db
+    restart: always
+    environment:
+      DATABASE_CLIENT: mysql
+      DATABASE_NAME: meet
+      DATABASE_HOST: localhost
+      DATABASE_PORT: 3306
+      DATABASE_USERNAME: strapi
+      DATABASE_PASSWORD: root
+
+  # db:
+  #   image: postgres:latest
+  #   restart: always
+  #   ports: [ 5432:5432 ]
+  #   environment:
+  #     POSTGRES_DB: meet
+  #     POSTGRES_PASSWORD: root
+  #     POSTGRES_USER: root
+  #   volumes:
+  #     - db:/var/lib/postgresql/data
+
+  frontend:
+    image: node:16
+    ports: [ 3000:3000 ]
+    volumes:
+      - ./frontend:/usr/local/app
+    restart: always
+    working_dir: /usr/local/app
+    entrypoint: "/bin/bash"
+    command: "-c \"if [ ! -d \"node_modules\" ]; then npm i; fi; npm run dev\""
+
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'meet'
+      # So you don't have to use root, but you can if you like
+      MYSQL_USER: 'strapi'
+      # You can use whatever password you like
+      MYSQL_PASSWORD: 'root'
+      # Password for root access
+      MYSQL_ROOT_PASSWORD: 'root'
+    ports:
+      # <Port exposed> : < MySQL Port running inside container>
+      - '3306:3306'
+    expose:
+      # Opens port 3306 on the container
+      - '3306'
+      # Where our data will be persisted
+    volumes:
+      - my-db:/var/lib/mysql
+# Names our volume
+volumes:
+  my-db:
